@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Prototypal</title>
+</head>
+<body>
+
+<div id="dump">
+  <h1>Prototypal</h1>
+</div>
+
+<script src="../js/prototypal.js" type="text/javascript"></script>
+<script type="text/javascript">
+  var dump = document.getElementById('dump');
+  var i, d, ian;
+  
+  i = 1000000;
+  ian = Object.create(Person);
+  ian.initialize("Ian Myers");
+  d = new Date().getTime();
+
+  while(i--) {
+    ian.sayHello('developer');
+  }
+
+  var time = new Date().getTime() - d;
+  var result = document.createElement("p");
+  result.innerHTML = "Prototypal model called a function one million times in <b>" + time + " ms</b>.";
+  dump.appendChild(result);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Pseudoclassical</title>
+</head>
+<body>
+
+<div id="dump">
+  <h1>Pseudoclassical</h1>
+</div>
+
+<script src="../js/pseudoclassical.js" type="text/javascript"></script>
+<script type="text/javascript">
+  var dump = document.getElementById('dump');
+  var i, d, ian;
+  
+  i = 1000000;
+  d = new Date().getTime();
+
+  while(i--) {
+    ian = new Person("Ian Myers");
+  }
+
+  var time = new Date().getTime() - d;
+  var result = document.createElement("p");
+  result.innerHTML = "Pseudoclassical model created one million instances in <b>" + time + " ms</b>.";
+  dump.appendChild(result);
+</script>
+
+</body>
+</html>
