@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>code 4</title>
+</head>
+<link rel="stylesheet" href="styles.css">
+<!-- <script src="jquery.js"></script> // AHH SHIT WHAT ARE WE TO DO NOW?! -->
+<script>
+
+window.onload = function() { // <-- whatevs
+
+  var somethingToAnimate = document.getElementById('animateThis');
+
+  var now, end;
+
+  var duration = 500;
+
+  var incrimentAnimationBy = 5;
+
+  var queue = false;
+
+  var complete = function (i, now) {
+    end = +new Date();
+    console.log(i + ' done!', now - end);
+  }
+
+  var i = 0;
+  var doAnimation = function () {
+    examples[i](i);
+    i++;
+    if (i === examples.length) {
+      i = 0;
+    }
+  };
+  examples = [];
+
+  examples.push(function () {
+
+    // Well for one we are missing the duration time... right now its only working
+    // off the framerate and the destination time, what if we want it to complete
+    // in a certain amount of time?
+
+    var Animation = function (options, complete) {
+      this.element = options.element;
+      this.properties = options.properties;
+      this.duration = options.duration || 1000; // Set the duration.
+      this.complete = complete || function () {};
+      this.frameRate = 16;
+      this.intervalId = null;
+      this.startTime = +new Date();
+      // this.incrimentAnimationBy = this.duration / this.goal;
+      this.start();
+    };
+
+    Animation.prototype = {
+
+      getValue: function (element, property) {
+        return parseInt(element.style[property]) || 0;
+      },
+
+      setValue: function (element, property, value) {
+        element.style[property] = value;
+      },
+
+      step: function () {
+
+        for (var property in this.properties) {
+
+          var distance = this.properties[property];
+
+          var framesInAnimation = this.duration / this.frameRate; // How many frames will be in the animation
+          var incrimentAnimationBy = distance / framesInAnimation; // How much will we have to incriment by each frame in order to reach our destination time
+
+          var now = + new Date();
+          // How much time has passed as of now
+          var timePassed = now - this.startTime;
+          // How much time has passed as of now
+          var progress = timePassed / this.duration;
+          // uhh... How many pixels should we be at right about now?
+          var pixelProgress = distance * progress;
+
+          var value = pixelProgress;
+
+          if (value >= distance) {
+            this.setValue(this.element, property, distance);
+            this.stop();
+            this.complete();
+            return false;
+          }
+
+          this.setValue(this.element, property, value);
+
+        }
+
+      },
+
+      start: function () {  
+        var self = this;
+        this.intervalId = setInterval(function () {
+          self.step.call(self);
+        }, this.frameRate);
+      },
+
+      stop: function () {
+        clearInterval(this.intervalId);
+      },
+
+    };
+
+
+    var start = +new Date();
+    new Animation(
+      {
+        properties: {left: 800},
+        element: somethingToAnimate,
+        duration: 500,
+      },
+      function () {
+        var stop = +new Date();
+        console.log(stop - start);
+      });
+
+  });
+
+  window.addEventListener('click', doAnimation, false);
+  window.addEventListener('keypress', doAnimation, false);
+
+  // Note about multiple sett ime oiuts vs one
+
+}
+
+</script>
+<body>
+
+<div id="animateThis"><img src="image.gif"></div>
+
+</body>
+</html>

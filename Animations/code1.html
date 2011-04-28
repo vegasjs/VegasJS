@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>code 1</title>
+</head>
+<link rel="stylesheet" href="styles.css">
+<script src="jquery.js"></script>
+<script>
+$(document).ready(function () {
+
+  var somethingToAnimate = jQuery('#animateThis');
+
+  var now, end;
+
+  var duration = 500;
+
+  var queue = false;
+
+  var complete = function (i, now) {
+    end = +new Date();
+    console.log(i + ' done!', now - end);
+  }
+
+  examples = [];
+
+  examples.push(function (i) {
+
+    now = +new Date();
+    somethingToAnimate.animate(
+      {
+        left: '800px'
+      },
+      {
+        duration: duration,
+        queue: queue,
+        complete: function(){complete(i, now)}
+      }
+    );
+
+  });
+
+  examples.push(function (i) {
+
+    now = +new Date();
+    somethingToAnimate.animate(
+      {
+        opacity: '0'
+      },
+      {
+        duration: duration,
+        queue: queue,
+        complete: function(){complete(i, now)}
+      }
+    );
+
+  });
+
+  examples.push(function (i) {
+
+    now = +new Date();
+    somethingToAnimate.animate(
+      {
+        opacity: '1',
+        left: '0'
+      },
+      {
+        duration: duration,
+        queue: queue,
+        complete: function(){complete(i, now)}
+      }
+    );
+
+  });
+
+  var i = 0;
+  var doAnimation = function () {
+    examples[i](i);
+    i++;
+    if (i === examples.length) {
+      i = 0;
+    }
+  };
+
+  jQuery(window).bind('click keypress', doAnimation);
+
+});
+</script>
+<body>
+
+<div id="animateThis"><img src="image.gif"></div>
+
+</body>
+</html>

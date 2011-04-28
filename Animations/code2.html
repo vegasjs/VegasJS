@@ -1,0 +1,244 @@
+<html>
+<head>
+<title>code 2</title>
+</head>
+<link rel="stylesheet" href="styles.css">
+<!-- <script src="jquery.js"></script> // AHH SHIT WHAT ARE WE TO DO NOW?! -->
+<script>
+
+window.onload = function() { // <-- whatevs
+
+  var somethingToAnimate = document.getElementById('animateThis');
+
+  var now, end;
+
+  var duration = 500;
+
+  var incrimentAnimationBy = 5;
+
+  var queue = false;
+
+  var complete = function (i, now) {
+    end = +new Date();
+    console.log(i + ' done!', now - end);
+  }
+
+  examples = [];
+
+  // Our first stab at it
+  examples.push(function (i) {
+
+    var toTheLeft = 500;
+    var id;
+
+    var meh = function () {
+
+      // somethingToAnimate.style.left can be "" so || 0
+
+      var currLeft = parseInt(somethingToAnimate.style.left) || 0;
+
+      // We have reached the end goal of 500 pixels
+      if (currLeft > toTheLeft) {
+        clearInterval(id); // Clear the interval to stop
+        console.log('oh yeah!');
+        return false; // and don't incriment the value if its over...
+      }
+
+      somethingToAnimate.style.left = (currLeft + incrimentAnimationBy) + 'px';
+
+    };
+
+    id = setInterval(meh, 25);
+
+  });
+  var i = 0;
+  var doAnimation = function () {
+    examples[i](i);
+    i++;
+    if (i === examples.length) {
+      i = 0;
+    }
+  };
+
+
+  // Lets make a dead simple api and clean things up a bit
+  examples.push(function (i) {
+
+    var Animation = function (options, complete) {
+      this.element = options.element;
+      this.properties = options.properties;
+      this.complete = complete || function () {};
+      this.frameRate = 25;
+      this.intervalId = null;
+      this.incrimentAnimationBy = incrimentAnimationBy || 1;
+      this.start();
+    };
+
+    Animation.prototype = {
+
+      getValue: function (element, property) {
+        return parseInt(element.style[property]) || 0;
+      },
+
+      setValue: function (element, property, value) {
+        element.style[property] = value;
+      },
+
+      step: function () {
+
+        // Loop through ALL the css properties that need to be animated
+        for (var property in this.properties) {
+
+          var goal = this.properties[property];
+
+          var value = this.getValue(this.element, property) + this.incrimentAnimationBy;
+
+          if (value > goal) {
+            this.stop();
+            this.complete();
+            return false;
+          }
+
+          this.setValue(this.element, property, value);
+
+        }
+
+      },
+
+      start: function () {  
+        var self = this;
+        this.intervalId = setInterval(function () {
+          self.step.call(self);
+        }, this.frameRate);
+      },
+
+      stop: function () {
+        clearInterval(this.intervalId);
+      },
+
+    };
+
+
+    console.log('Coool we have an animation class');
+
+    var animateThis = document.getElementById('animateThis');
+
+    examples.push(function () {
+
+      animateThis.style.top = 0;
+      animateThis.style.left = 0;
+
+      new Animation({properties: {left: 500}, element: animateThis}, function () {
+        console.log('done sir done 1');
+      });
+
+    });
+
+    examples.push(function () {
+
+      animateThis.style.top = 0;
+      animateThis.style.left = 0;
+
+      new Animation({properties: {left: 500, top: 500}, element: animateThis}, function () {
+        console.log('done sir done 2');
+      });
+
+    });
+
+    examples.push(function () {
+      console.log('Something is missing... well alot of things are missing');
+      // Take a moment of appreciation for all animation library's out there.
+    });
+
+    examples.push(function () {
+
+      // Well for one we are missing the duration time... right now its only working
+      // off the framerate and the destination time, what if we want it to complete
+      // in a certain amount of time?
+
+      var Animation = function (options, complete) {
+        this.element = options.element;
+        this.properties = options.properties;
+        this.duration = options.duration || 1000; // Set the duration.
+        this.complete = complete || function () {};
+        this.frameRate = 25;
+        this.intervalId = null;
+        this.incrimentAnimationBy = this.duration / 25;
+        this.start();
+      };
+
+      Animation.prototype = {
+
+        getValue: function (element, property) {
+          return parseInt(element.style[property]) || 0;
+        },
+
+        setValue: function (element, property, value) {
+          element.style[property] = value;
+        },
+
+        step: function () {
+
+          // Loop through ALL the css properties that need to be animated
+          for (var property in this.properties) {
+
+            var goal = this.properties[property];
+
+            var value = this.getValue(this.element, property) + this.incrimentAnimationBy;
+
+            if (value > goal) {
+              this.stop();
+              this.complete();
+              return false;
+            }
+
+            this.setValue(this.element, property, value);
+
+          }
+
+        },
+
+        start: function () {  
+          var self = this;
+          this.intervalId = setInterval(function () {
+            self.step.call(self);
+          }, this.frameRate);
+        },
+
+        stop: function () {
+          clearInterval(this.intervalId);
+        },
+
+      };
+
+
+      console.log('Now we have an animation class that we can specify a duration');
+      
+      new Animation(
+        {
+          properties: {left: 500, top: 500},
+          element: animateThis,
+          duration: 1000,
+        }, function () {
+        console.log('done sir done 2');
+      });
+
+    });
+
+  });
+
+  
+  window.addEventListener('click', doAnimation, false);
+  window.addEventListener('keypress', doAnimation, false);
+
+  // Note about multiple sett ime oiuts vs one
+
+}
+
+</script>
+<body>
+
+<div id="animateThis"><img src="image.gif"></div>
+
+</body>
+</html>
